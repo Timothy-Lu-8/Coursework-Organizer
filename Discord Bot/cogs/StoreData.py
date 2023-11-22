@@ -66,6 +66,14 @@ class StoreData(commands.Cog):
         update = self.update_helper()
         cursor.execute(query, (update[0], update[1]))
         database.commit()
+    
+    @nextcord.slash_command()
+    async def remove_many(self, interaction: nextcord.Interaction):
+        current_day = str(datetime.today().date())
+        query = "DELETE FROM Assignments WHERE due_date < '%s';" %(current_day)
+        cursor.execute(query)
+        database.commit()
+        print("Assignments removed!")
 
 def setup(client):
     client.add_cog(StoreData(client))
