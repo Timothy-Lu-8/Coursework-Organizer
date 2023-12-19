@@ -1,6 +1,9 @@
 import nextcord
 import os
 from nextcord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()
 
 intents = nextcord.Intents.default()
 intents.message_content = True
@@ -20,5 +23,4 @@ if __name__ == '__main__':
     for extension in initial_extensions:
         client.load_extension(extension)
 
-client.run('') #removed token for security purposes
-
+client.run(os.getenv("discord_key"))
