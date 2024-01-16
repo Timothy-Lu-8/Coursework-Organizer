@@ -18,10 +18,9 @@ class StoreData(commands.Cog):
             try:
                 due_date = input("Input when this assignment is due (YYYY-MM-DD format): ")
                 datetime.datetime(year=int(due_date[0:4]), month=int(due_date[5:7]), day=int(due_date[8:]))
-                break
+                return [assignment, course, due_date]
             except:
                 print("Not a valid date.")
-        return [assignment, course, due_date]
 
     def remove_helper(self):
         assignment_name = input("Input the name of the assignment to remove: ")
@@ -32,6 +31,17 @@ class StoreData(commands.Cog):
         assignment = input("Input the name of the assignment here: ")
         course = input("Input the course associated with this assignment is for: ")
         return [assignment, course]
+    
+    def update_due_date_helper(self):
+        assignment = input("Input the name of the assignment here: ")
+        course = input("Input the course associated with this assignment is for: ")
+        while True:
+            try:
+                due = input("Input when this assignment is due (YYYY-MM-DD format): ")
+                datetime.datetime(year=int(due[0:4]), month=int(due[5:7]), day=int(due[8:]))
+                return [assignment, course, due]
+            except:
+                print("Not a valid date.")
     
     @nextcord.slash_command()
     async def add(self, interaction: nextcord.Interaction):
@@ -76,6 +86,14 @@ class StoreData(commands.Cog):
         query = "UPDATE Assignments SET completion = 'Complete' WHERE assignment_name = ? AND class = ?"
         update = self.update_helper()
         cursor.execute(query, (update[0], update[1]))
+        database.commit()
+        await interaction.send(f"Assignment {update[0]} with course number {update[1]} has been updated!")
+
+    @nextcord.slash_command()
+    async def update_due_date(self, interaction: nextcord.Interaction):
+        query = "UPDATE Assignments SET due_date = ? WHERE assignment_name = ? AND class = ?"
+        update = self.update_due_date_helper()
+        cursor.execute(query, (update[2], update[0], update[1]))
         database.commit()
         await interaction.send(f"Assignment {update[0]} with course number {update[1]} has been updated!")
     
